@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
-const security = { httpOnly: true, secure: true };
+const security = { httpOnly: true, secure: true, sameSite: "none" };
 
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
