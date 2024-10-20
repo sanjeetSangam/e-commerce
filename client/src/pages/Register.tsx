@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../utils/validationSchemas";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../store/slices/userSlice";
-import { AppDispatch } from "../store/store";
+import { AppDispatch, RootState } from "../store/store";
+import { toast } from "react-toastify";
 
 interface RegisterFormInputs {
 	name: string;
@@ -16,7 +17,8 @@ interface RegisterFormInputs {
 
 const Register: React.FC = () => {
 	const dispatch: AppDispatch = useDispatch();
-	const navigate = useNavigate(); // Initialize navigate
+	const navigate = useNavigate();
+	const { loading } = useSelector((state: RootState) => state.user);
 	const {
 		register,
 		handleSubmit,
@@ -27,9 +29,11 @@ const Register: React.FC = () => {
 
 	const onSubmit = async (data: RegisterFormInputs) => {
 		try {
-			await dispatch(registerUser(data)).unwrap();
+			const response = await dispatch(registerUser(data)).unwrap();
+			toast.success(`Welcome ${response.name}!`);
 			navigate("/");
 		} catch (error) {
+			toast.error(error as string);
 			console.error("Registration failed:", error);
 		}
 	};
@@ -120,6 +124,7 @@ const Register: React.FC = () => {
 					</div>
 
 					<button
+						disabled={loading}
 						type="submit"
 						className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition duration-300"
 					>
@@ -127,12 +132,14 @@ const Register: React.FC = () => {
 					</button>
 				</form>
 
-				<p className="text-sm text-center text-gray-600 mt-4">
-					Already have an account?{" "}
-					<Link to="/auth/login" className="text-blue-500 hover:underline">
-						Login
-					</Link>
-				</p>
+				{loading ? null : (
+					<p className="text-sm text-center text-gray-600 mt-4">
+						Already have an account?{" "}
+						<Link to="/auth/login" className="text-blue-500 hover:underline">
+							Login
+						</Link>
+					</p>
+				)}
 			</div>
 		</div>
 	);

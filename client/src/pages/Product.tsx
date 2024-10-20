@@ -1,7 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useCart from "../hooks/useCart";
+import axiosInstance from "../utils/axiosApi";
+import Loader from "../components/Loader";
 
 interface Product {
 	_id: string;
@@ -21,7 +22,9 @@ const Product = () => {
 
 	const fetchProduct = async () => {
 		try {
-			const { data } = await axios.get(`/api/products/${id}`, { withCredentials: true });
+			const { data } = await axiosInstance.get(`/api/products/${id}`, {
+				withCredentials: true,
+			});
 			setProduct(data);
 			setIsLoaded(true);
 		} catch (error) {
@@ -35,12 +38,7 @@ const Product = () => {
 	}, [id]);
 
 	if (!product) {
-		return (
-			<div className="container mx-auto p-4">
-				<h1 className="text-2xl font-semibold mb-2">Product</h1>
-				<p className="text-gray-600 mb-4">Loading...</p>
-			</div>
-		);
+		return <Loader />;
 	}
 
 	return (

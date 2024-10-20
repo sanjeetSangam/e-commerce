@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/validationSchemas";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/slices/userSlice";
-import { AppDispatch } from "../store/store";
+import { AppDispatch, RootState } from "../store/store";
+import { toast } from "react-toastify";
 
 interface LoginFormInputs {
 	email: string;
@@ -16,6 +17,8 @@ const Login: React.FC = () => {
 	const dispatch: AppDispatch = useDispatch();
 	const navigate = useNavigate();
 
+	const { loading } = useSelector((state: RootState) => state.user);
+
 	const {
 		register,
 		handleSubmit,
@@ -25,14 +28,17 @@ const Login: React.FC = () => {
 	});
 
 	const onSubmit = async (data: LoginFormInputs) => {
+		if (loading) return;
 		try {
 			const payload = {
 				email: data.email,
 				password: data.password,
 			};
-			await dispatch(loginUser(payload)).unwrap();
+			const response = await dispatch(loginUser(payload)).unwrap();
+			toast.success(`Welcome ${response.name}!`);
 			navigate("/");
 		} catch (error) {
+			toast.error(error as string);
 			console.error("Login failed:", error);
 		}
 	};
@@ -84,6 +90,7 @@ const Login: React.FC = () => {
 
 					{/* Submit Button */}
 					<button
+						disabled={loading}
 						type="submit"
 						className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
 					>
@@ -91,12 +98,14 @@ const Login: React.FC = () => {
 					</button>
 				</form>
 
-				<p className="text-sm text-center text-gray-600 mt-4">
-					Don't have an account?{" "}
-					<Link to="/auth/register" className="text-blue-500 hover:underline">
-						Register
-					</Link>
-				</p>
+				{loading ? null : (
+					<p className="text-sm text-center text-gray-600 mt-4">
+						Don't have an account?{" "}
+						<Link to="/auth/register" className="text-blue-500 hover:underline">
+							Register
+						</Link>
+					</p>
+				)}
 			</div>
 		</div>
 	);

@@ -4,6 +4,8 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchUserCart } from "../store/slices/cartSlice";
 import { AppDispatch, RootState } from "../store/store";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppLayout = () => {
 	const dispatch: AppDispatch = useDispatch();
@@ -15,6 +17,7 @@ const AppLayout = () => {
 
 	return (
 		<div>
+			<ToastContainer />
 			<Navbar />
 			<Outlet />
 		</div>
