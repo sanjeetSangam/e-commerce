@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+      "types": ["vite/client"],
+      "module": "ESNext",   // Ensure module system is correct
+      "target": "ESNext",   // Or "ES6" depending on your preference
+      "jsx": "react-jsx"    // React JSX support (if using React)
+  }
+}
