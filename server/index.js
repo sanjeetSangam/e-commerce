@@ -10,6 +10,8 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 connectDB();
 
+console.log("process.env.CLIENT_URI", process.env.CLIENT_URI);
+
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_URI }));
