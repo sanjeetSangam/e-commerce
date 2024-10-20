@@ -12,7 +12,22 @@ connectDB();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_URI }));
+
+const corsOptions = {
+	origin: function (origin, callback) {
+		const allowedOrigins = [process.env.CLIENT_URI, "http://localhost:5173"];
+		if (!origin || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error("Not allowed by CORS"));
+		}
+	},
+	optionsSuccessStatus: 200,
+	credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(cookieParser());
 
 // API Routes

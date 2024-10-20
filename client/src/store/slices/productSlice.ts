@@ -1,15 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Product } from "../../pages";
+import axiosInstance from "../../utils/axiosApi";
 
 export const fetchProducts = createAsyncThunk(
 	"product/fetchProducts",
 	async (params: { category?: string; priceRange?: string }, { rejectWithValue }) => {
 		try {
-			const response = await axios.get("/api/products", { params });
+			const response = await axiosInstance.get("/api/products", { params });
 			return response.data;
 		} catch (error) {
-			return rejectWithValue(error || "Fetching products failed");
+			if (axios.isAxiosError(error)) {
+				return rejectWithValue(
+					error?.response?.data?.message || "Fetching products failed"
+				);
+			} else {
+				return rejectWithValue("Fetching products failed");
+			}
 		}
 	}
 );

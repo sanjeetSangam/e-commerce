@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import axiosInstance from "../../utils/axiosApi";
 
 interface UserState {
 	user: { name: string; email: string } | null;
@@ -18,10 +19,14 @@ export const loginUser = createAsyncThunk(
 	"user/login",
 	async (credentials: { email: string; password: string }, { rejectWithValue }) => {
 		try {
-			const response = await axios.post("/api/auth/login", credentials);
+			const response = await axiosInstance.post("/api/auth/login", credentials);
 			return response.data; // Assuming response contains user info
 		} catch (error) {
-			return rejectWithValue(error || "Login failed");
+			if (axios.isAxiosError(error)) {
+				return rejectWithValue(error?.response?.data?.message || "Login failed");
+			} else {
+				return rejectWithValue("Login failed");
+			}
 		}
 	}
 );
@@ -30,17 +35,21 @@ export const registerUser = createAsyncThunk(
 	"user/register",
 	async (newUser: { name: string; email: string; password: string }, { rejectWithValue }) => {
 		try {
-			const response = await axios.post("/api/auth/register", newUser);
+			const response = await axiosInstance.post("/api/auth/register", newUser);
 			return response.data; // Assuming response contains user info
 		} catch (error) {
-			return rejectWithValue(error || "Registration failed");
+			if (axios.isAxiosError(error)) {
+				return rejectWithValue(error?.response?.data?.message || "Registration failed");
+			} else {
+				return rejectWithValue("Registration failed");
+			}
 		}
 	}
 );
 
 export const logoutUser = createAsyncThunk("user/logout", async (_, { rejectWithValue }) => {
 	try {
-		await axios.post("/api/auth/logout");
+		await axiosInstance.post("/api/auth/logout");
 		return null;
 	} catch (error) {
 		return rejectWithValue(error || "Logout failed");
