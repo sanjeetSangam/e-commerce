@@ -10,7 +10,9 @@ interface FilterSidebarProps {
 	onCategoryChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 	priceRange: string;
 	toggleSidebar: () => void;
+	onSortChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 	onPriceRangeChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+	sort: string;
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -21,6 +23,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 	priceRange,
 	onPriceRangeChange,
 	toggleSidebar,
+	onSortChange,
+	sort,
 }) => {
 	return (
 		<div
@@ -37,13 +41,34 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
 			<div className="mb-6 border-b-2 pb-4">
 				<div className="flex justify-between items-center">
-					<h3 className="text-xl font-semibold mb-4">Filters</h3>
+					<h3 className="text-xl font-semibold mb-4">Sort By</h3>
 					<button
 						onClick={clearFilters}
 						className="bg-slate-600 text-white py-2 px-4 rounded-lg text-sm"
 					>
 						Clear All
 					</button>
+				</div>
+				<div className="flex flex-col gap-4">
+					<div>
+						<label htmlFor="category" className="block mb-2 text-gray-700">
+							Sort
+						</label>
+						<select
+							id="category"
+							value={sort}
+							onChange={onSortChange}
+							className="border rounded p-2 w-full"
+						>
+							<option value="asc">Price (ASC)</option>
+							<option value="desc">Price (DESC)</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div className="mb-6 border-b-2 pb-4">
+				<div className="flex justify-between items-center">
+					<h3 className="text-xl font-semibold mb-4">Filters</h3>
 				</div>
 				<div className="flex flex-col gap-4">
 					<div>

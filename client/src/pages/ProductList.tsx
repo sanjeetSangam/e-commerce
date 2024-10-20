@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useCart from "../hooks/useCart";
@@ -29,6 +28,7 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
 	const [priceRange, setPriceRange] = useState<string>("");
 	const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+	const [sort, setSort] = useState("asc");
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -41,6 +41,11 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 		setQueryParams({ priceRange: event.target.value });
 	};
 
+	const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		setQueryParams({ sort: event.target.value });
+		setSort(event.target.value);
+	};
+
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
 	};
@@ -48,7 +53,7 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 	const clearFilters = () => {
 		setSelectedCategory("");
 		setPriceRange("");
-		setQueryParams({ category: "", priceRange: "" });
+		setQueryParams({ category: "", priceRange: "", sort: "" });
 	};
 
 	const setQueryParams = (newParams: { [key: string]: string }) => {
@@ -68,6 +73,7 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 	useEffect(() => {
 		setSelectedCategory(searchParams.get("category") || "");
 		setPriceRange(searchParams.get("priceRange") || "");
+		setSort(searchParams.get("sort") || "asc");
 	}, [searchParams]);
 
 	useEffect(() => {
@@ -88,11 +94,12 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 
 	useEffect(() => {
 		const params = {
-			category: selectedCategory,
-			priceRange,
+			category: searchParams.get("category") as string,
+			priceRange: searchParams.get("priceRange") as string,
+			sort: searchParams.get("sort") as string,
 		};
 		dispatch(fetchProducts(params));
-	}, [selectedCategory, priceRange, dispatch]);
+	}, [searchParams, dispatch]);
 
 	return (
 		<div className="flex relative">
@@ -106,6 +113,8 @@ const ProductList = ({ showSidebar = true }: { showSidebar?: boolean }) => {
 						priceRange={priceRange}
 						toggleSidebar={toggleSidebar}
 						onPriceRangeChange={handlePriceRangeChange}
+						onSortChange={handleSortChange}
+						sort={sort}
 					/>
 				)}
 			</div>

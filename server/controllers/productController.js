@@ -16,7 +16,7 @@ export const createProduct = async (req, res) => {
 
 // Get all products
 export const getProducts = async (req, res) => {
-	const { category, priceRange } = req.query;
+	const { category, priceRange, sort, page = 1, limit = 20 } = req.query;
 
 	const filter = {};
 	if (category) {
@@ -24,12 +24,37 @@ export const getProducts = async (req, res) => {
 	}
 	if (priceRange) {
 		const [min, max] = priceRange.split("-");
-		filter.price = { $gte: min, $lte: max };
+		filter.price = { $gte: Number(min), $lte: Number(max) };
 	}
 
+	const sortOptions = {};
+	if (sort) {
+		if (sort === "asc") {
+			sortOptions.price = 1;
+		} else if (sort === "desc") {
+			sortOptions.price = -1;
+		}
+	} else {
+		sortOptions.price = 1;
+	}
+
+	const options = {
+		sort: sortOptions,
+		page: Number(page),
+		limit: Number(limit),
+	};
+
 	try {
-		const products = await Product.find(filter);
-		res.json(products);
+		const products = await Product.find(filter, null, options);
+		const totalProducts = await Product.countDocuments(filter);
+		const totalPages = Math.ceil(totalProducts / limit);
+
+		res.json({
+			products,
+			totalPages,
+			currentPage: page,
+			totalProducts,
+		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
