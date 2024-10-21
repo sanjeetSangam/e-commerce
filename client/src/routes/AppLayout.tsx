@@ -13,7 +13,7 @@ const AppLayout = () => {
 
 	useEffect(() => {
 		if (user) dispatch(fetchUserCart());
-	});
+	}, []);
 
 	return (
 		<div>

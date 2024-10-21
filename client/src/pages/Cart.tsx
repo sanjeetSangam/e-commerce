@@ -1,12 +1,14 @@
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../store/store";
 import NoDataFound from "../components/NoDataFound";
 import useCart from "../hooks/useCart";
+import { toast } from "react-toastify";
 
 const Cart = () => {
 	const { cart, cartTotalBill, totalItems } = useSelector((state: RootState) => state.cart);
 	const { removeFromCart, updateCartItemQuantity } = useCart();
+	const navigate = useNavigate();
 
 	const updateQuantity = (id: string, quantity: number) => {
 		if (quantity <= 0) {
@@ -14,6 +16,11 @@ const Cart = () => {
 			return;
 		}
 		updateCartItemQuantity(id, quantity);
+	};
+
+	const handleCheckout = () => {
+		toast.success("Purchase successful!");
+		navigate("/");
 	};
 
 	return (
@@ -96,12 +103,12 @@ const Cart = () => {
 							<p>${cartTotalBill.toFixed(2)}</p>
 						</div>
 
-						<Link
-							to="/"
-							className="block mt-4 px-4 py-2 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700"
+						<button
+							onClick={handleCheckout}
+							className="block w-full mt-4 px-4 py-2 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700"
 						>
 							Proceed to Checkout
-						</Link>
+						</button>
 					</div>
 				</>
 			)}

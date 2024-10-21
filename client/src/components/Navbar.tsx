@@ -17,7 +17,7 @@ const Navbar = () => {
 		try {
 			await dispatch(logoutUser()).unwrap();
 			dispatch(clearCart());
-			window.location.reload();
+			navigate("/");
 		} catch (error) {
 			console.error("Logout failed:", error);
 		}

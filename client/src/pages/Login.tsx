@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/slices/userSlice";
 import { AppDispatch, RootState } from "../store/store";
 import { toast } from "react-toastify";
+import { fetchUserCart } from "../store/slices/cartSlice";
 
 interface LoginFormInputs {
 	email: string;
@@ -35,6 +36,7 @@ const Login: React.FC = () => {
 				password: data.password,
 			};
 			const response = await dispatch(loginUser(payload)).unwrap();
+			await dispatch(fetchUserCart()).unwrap();
 			toast.success(`Welcome ${response.name}!`);
 			navigate("/");
 		} catch (error) {
